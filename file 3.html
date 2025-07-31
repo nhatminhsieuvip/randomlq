@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>1000 Gmail Random</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{
+            font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+            background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:20px;
+        }
+        .card{
+            background:rgba(255,255,255,.95);
+            border-radius:20px;
+            box-shadow:0 20px 40px rgba(0,0,0,.1);
+            padding:40px;
+            max-width:900px;
+            width:100%;
+            animation:fadeIn .6s ease;
+        }
+        @keyframes fadeIn{
+            from{transform:translateY(-30px);opacity:0}
+            to{transform:translateY(0);opacity:1}
+        }
+        h1{
+            text-align:center;
+            font-size:2.5rem;
+            background:linear-gradient(135deg,#667eea,#764ba2);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+            margin-bottom:10px;
+        }
+        .subtitle{
+            text-align:center;
+            color:#666;
+            margin-bottom:30px;
+            font-size:1.1rem;
+        }
+        .list{
+            max-height:60vh;
+            overflow-y:auto;
+            border-radius:10px;
+            background:#f8f9fa;
+            padding:20px;
+        }
+        .list::-webkit-scrollbar{width:8px}
+        .list::-webkit-scrollbar-track{background:#f1f1f1;border-radius:10px}
+        .list::-webkit-scrollbar-thumb{background:#667eea;border-radius:10px}
+        .item{
+            background:#fff;
+            border-radius:10px;
+            padding:15px;
+            margin-bottom:10px;
+            box-shadow:0 2px 5px rgba(0,0,0,.08);
+            transition:transform .2s,box-shadow .2s;
+            animation:slide .4s ease-out;
+        }
+        @keyframes slide{
+            from{transform:translateX(-20px);opacity:0}
+            to{transform:translateX(0);opacity:1}
+        }
+        .item:hover{transform:translateX(5px);box-shadow:0 4px 10px rgba(0,0,0,.15)}
+        .tk{color:#667eea;font-weight:700;font-size:1.05rem}
+        .mk{color:#555;font-family:monospace;font-size:.98rem;margin-top:4px}
+        .footer{text-align:center;margin-top:20px;color:#666;font-size:.9rem}
+        @media(max-width:600px){.card{padding:25px}h1{font-size:2rem}}
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>1000 Gmail Random</h1>
+        <p class="subtitle">Tự động tạo 1000 tài khoản khi tải lại trang</p>
+        <div id="list" class="list"></div>
+        <p class="footer">Làm mới trang để tạo lại 1000 tài khoản mới</p>
+    </div>
+
+    <script>
+        // Danh sách từ ngẫu nhiên
+        const first = ['anh','bao','chi','duc','hien','huy','khanh','linh','minh','nam','ngoc','phuc','quan','son','thao','tuan','van','vy','yen','khai','long','hai','ha','lan','mai','nhi','phuong','quynh','thu','uyen'];
+        const last = ['nguyen','tran','le','pham','hoang','vo','dang','bui','do','ngo','ly','mai','phan','vu','huynh','dinh','truong','lam','doan','ta','luong','cao','ho'];
+        const adj = ['fast','quick','smart','bright','cool','happy','lucky','strong','wise','swift','sharp','vivid','cute','wild','cool','nice','super','mega','ultra','pro','vip','king','queen','master'];
+        const noun = ['tiger','eagle','lion','wolf','bear','hawk','shark','falcon','dragon','phoenix','storm','thunder','rain','fire','ice','shadow','light','dark','power','force','king','queen','god','devil'];
+        const sym = ['','_','.','','','_','.','']; // Tăng tỉ lệ không có ký tự đặc biệt
+
+        function rand(n){return Math.floor(Math.random()*n)}
+        function pick(arr){return arr[rand(arr.length)]}
+        function randStr(len){
+            const c='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+            let s='';
+            for(let i=0;i<len;i++) s+=c[rand(c.length)];
+            return s;
+        }
+
+        function generateRandomEmail(){
+            const patterns = [
+                () => pick(first) + pick(sym) + pick(last) + (rand(99999) + 100),
+                () => pick(adj) + pick(sym) + pick(noun) + (rand(9999) + 100),
+                () => pick(last) + pick(sym) + pick(first) + (rand(9999) + 1000),
+                () => pick(first) + pick(last) + (rand(99999) + 1000),
+                () => pick(adj) + pick(noun) + (rand(99999) + 1000),
+                () => pick(last) + (rand(999999) + 1000),
+                () => pick(first) + (rand(9999999) + 1000),
+                () => pick(adj) + pick(sym) + (rand(999999) + 1000),
+                () => pick(noun) + pick(sym) + pick(last) + (rand(9999) + 100),
+                () => pick(first) + rand(999) + pick(last) + (rand(99) + 10),
+                () => pick(adj) + pick(noun) + pick(sym) + (rand(9999) + 100),
+                () => pick(last) + pick(first) + (rand(99999) + 1000)
+            ];
+            
+            let email = pick(patterns)();
+            // Đảm bảo chỉ chứa ký tự hợp lệ và không có khoảng trắng
+            email = email.replace(/[^a-zA-Z0-9._]/g, '').toLowerCase();
+            return email + '@gmail.com';
+        }
+
+        function generatePassword(){
+            const length = 12 + rand(6);
+            return randStr(length);
+        }
+
+        const list = document.getElementById('list');
+        for(let i = 0; i < 1000; i++){
+            const email = generateRandomEmail();
+            const password = generatePassword();
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.style.animationDelay = `${i * 0.0008}s`;
+            div.innerHTML = `<div class="tk">Tk:${email}</div><div class="mk">Mk:${password}</div>`;
+            list.appendChild(div);
+        }
+    </script>
+</body>
+</html>
